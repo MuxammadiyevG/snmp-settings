@@ -1,0 +1,26 @@
+ docker-compose.yml da
+      - ./snmp-cache:/usr/share/logstash/snmp-cache
+
+ # SNMP trap uchun (host:162 → container:1062)
+      - "162:1062/udp"
+
+Yangi switch qo'shganda — faqat hosts => [...] ga yangi IP qo'shing + vendor OID regex qo'shing. Boshqa hamma narsa avtomatik ishlaydi.Avval hozirgi fayllarni o'qib olamiz:Barcha 5 ta fayl tayyor. Qisqa xulosa:
+
+---
+
+**Qaysi index — qanday log:**
+
+| Pipeline | ES Index | Interval | Nima keladi |
+|----------|----------|----------|-------------|
+| 01_discovery | `metrics-snmp.discovery` | 1 soat | `vendor`, `interface_count`, `device.name/location` — qurilma pasporti |
+| 02_critical | `metrics-snmp.critical` | 60s | Har interface uchun alohida: `interface.oper_status`, `device.cpu.util_pct` |
+| 03_normal | `metrics-snmp.bandwidth` | 5 daqiqa | Har interface: `interface.in_bytes`, `out_bytes`, xatoliklar |
+| 04_inventory | `metrics-snmp.inventory` | 6 soat | `device.serial_number`, `device.firmware`, `device.model` |
+| 05_trap | `logs-snmp.trap` | Real-time | `event.action`, `interface.name`, trap sababi |
+
+**Rule yozganda:**
+- Port o'chdi/yondi → `logs-snmp.trap` (darhol) + `metrics-snmp.critical` (60s backup)
+- Bandwidth yuqori → `metrics-snmp.bandwidth`
+- Qurilma reboot → `logs-snmp.trap` (`event.action: device-coldstart`)
+
+**Yangi switch qo'shganda** — faqat `hosts => [...]` ga yangi IP qo'shing + vendor OID regex qo'shing. Boshqa hamma narsa avtomatik ishlaydi.

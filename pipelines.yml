@@ -1,0 +1,15 @@
+- pipeline.id: snmp_discovery
+  path.config: "/usr/share/logstash/pipeline/snmp/01_snmp_discovery.conf"
+
+- pipeline.id: snmp_critical
+  path.config: "/usr/share/logstash/pipeline/snmp/02_snmp_critical.conf"
+
+- pipeline.id: snmp_normal
+  path.config: "/usr/share/logstash/pipeline/snmp/03_snmp_normal.conf"
+
+- pipeline.id: snmp_inventory
+  path.config: "/usr/share/logstash/pipeline/snmp/04_snmp_inventory.conf"
+
+- pipeline.id: snmp_trap
+  path.config: "/usr/share/logstash/pipeline/snmp/05_snmp_trap.conf"
+netadmin@siem:~/siem-core$
